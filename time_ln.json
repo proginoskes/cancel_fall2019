@@ -1,0 +1,42 @@
+{
+  $schema: 'https://vega.github.io/schema/vega-lite/v4.json',
+  data: {url:'https://raw.githubusercontent.com/proginoskes/cancel_fall2019/master/verif_top_ten_tweets.json'},
+  width: 700,
+  height: 450,
+  config:{legend:{labelColor:'white'}, axis:{labelColor:'white'}, mark:{opacity:0.7}},
+  encoding: {x: {field: 'date', type: 'temporal'}},
+  layer: [
+    {
+        encoding:{x: {field: 'date', type : 'temporal',timeUnit:'year,month,date', color:'white'}, 
+              size : {aggregate:'count',type:'quantitative', "scale": {minSize: 450}}, 
+              y:{field:'username',type:'nominal'}, 
+              color:{field:'username',type:'nominal'}
+             },
+      layer: [
+        {mark: 'circle'},
+        {transform: [{filter: {selection: 'hover'}}], mark: 'point'}
+      ]
+    },
+    {
+      transform: [{pivot: 'symbol', value: 'price', groupby: ['date']}],
+      mark: 'rule',
+      encoding: {
+        opacity: {condition: {value: 0.7, selection: 'hover', color:'white'},value: 0},
+        color:{value:'lightblue'},
+        tooltip: [
+          {aggregate: 'count', type: 'quantitative'}
+        ]
+      },
+      selection: {
+        hover: {
+          type: 'single',
+          fields: ['date'],
+          nearest: true,
+          on: 'mouseover',
+          empty: 'none',
+          clear: 'mouseout'
+        }
+      }
+    }
+  ]
+}
